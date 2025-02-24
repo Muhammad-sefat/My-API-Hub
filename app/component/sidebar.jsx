@@ -23,7 +23,7 @@ export default function Sidebar() {
   return (
     <div className="w-64 h-screen bg-gray-900 text-white flex flex-col p-5 shadow-lg">
       {/* Dashboard Title */}
-      <h2 className="text-2xl font-semibold text-center mb-6">Dashboard</h2>
+      <h2 className="text-2xl font-semibold text-center mb-6">My_API_Hub</h2>
 
       {/* Navigation Links */}
       <ul className="space-y-4">

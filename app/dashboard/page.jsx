@@ -1,11 +1,13 @@
-import React from "react";
+"use client";
+import { useEffect } from "react";
+import { useRouter } from "next/navigation";
 
-const page = () => {
-  return (
-    <div>
-      <p>hello developer</p>
-    </div>
-  );
-};
+export default function Dashboard() {
+  const router = useRouter();
 
-export default page;
+  useEffect(() => {
+    router.replace("/dashboard/weather");
+  }, [router]);
+
+  return null;
+}
