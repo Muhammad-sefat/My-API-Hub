@@ -38,7 +38,7 @@ export default function Sidebar() {
         </li>
         <li>
           <Link
-            href="/dashboard/chatbot"
+            href="/dashboard/chatboat"
             className="flex items-center space-x-3 text-lg hover:bg-gray-800 p-3 rounded-lg transition"
           >
             <FaRobot className="text-blue-400" />
