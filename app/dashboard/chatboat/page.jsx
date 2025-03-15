@@ -6,7 +6,6 @@ export default function Chat() {
   const [input, setInput] = useState("");
   const [loading, setLoading] = useState(false);
 
-  // Load chat history from localStorage on mount
   useEffect(() => {
     const savedMessages = localStorage.getItem("chatHistory");
     if (savedMessages) {
@@ -14,7 +13,6 @@ export default function Chat() {
     }
   }, []);
 
-  // Save chat history to localStorage
   useEffect(() => {
     localStorage.setItem("chatHistory", JSON.stringify(messages));
   }, [messages]);
@@ -27,49 +25,87 @@ export default function Chat() {
     setInput("");
     setLoading(true);
 
-    const res = await fetch("/api/chat", {
-      method: "POST",
-      headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({ message: input }),
-    });
+    try {
+      const res = await fetch("/api/chat", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ message: input }),
+      });
 
-    const data = await res.json();
-    setMessages([
-      ...newMessages,
-      { role: "assistant", content: data.choices[0].message.content },
-    ]);
+      const data = await res.json();
+      setMessages([
+        ...newMessages,
+        {
+          role: "assistant",
+          content: data.response || "Sorry, I didn't understand.",
+        },
+      ]);
+    } catch (error) {
+      setMessages([
+        ...newMessages,
+        { role: "assistant", content: "Error fetching response." },
+      ]);
+    }
+
     setLoading(false);
   };
 
+  const clearChat = () => {
+    setMessages([]);
+    localStorage.removeItem("chatHistory");
+  };
+
   return (
-    <div className="max-w-lg mx-auto p-4 border rounded-lg shadow-lg bg-gray-100">
-      <div className="h-96 overflow-y-auto p-2 border-b bg-white rounded-md">
+    <div className="max-w-4xl mx-auto p-4 my-2 border rounded-lg shadow-xl bg-gradient-to-br from-blue-200 to-blue-100">
+      <div className="flex justify-between items-center mb-2">
+        <h2 className="text-lg font-semibold text-gray-700">AI Chatbot</h2>
+        <button
+          onClick={clearChat}
+          className="text-sm bg-red-500 text-white px-3 py-1 rounded-md hover:bg-red-600"
+        >
+          Clear Chat
+        </button>
+      </div>
+
+      <div className="h-96 overflow-y-auto p-3 border bg-white rounded-md shadow-inner">
+        {messages.length === 0 && (
+          <p className="text-center text-gray-500">Start the conversation...</p>
+        )}
         {messages.map((msg, index) => (
-          <p
+          <div
             key={index}
-            className={`p-2 rounded-md my-1 ${
-              msg.role === "user"
-                ? "bg-blue-500 text-white text-right"
-                : "bg-gray-300 text-left"
+            className={`my-2 flex ${
+              msg.role === "user" ? "justify-end" : "justify-start"
             }`}
           >
-            {msg.content}
-          </p>
+            <p
+              className={`p-3 max-w-xl text-sm rounded-lg shadow ${
+                msg.role === "user"
+                  ? "bg-blue-500 text-white"
+                  : "bg-gray-300 text-gray-800"
+              }`}
+            >
+              {msg.content}
+            </p>
+          </div>
         ))}
       </div>
-      <div className="flex gap-2 mt-2">
+
+      <div className="flex gap-2 mt-3">
         <input
-          className="flex-1 p-2 border rounded-md focus:outline-none"
+          className="flex-1 p-3 border rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
           value={input}
           onChange={(e) => setInput(e.target.value)}
           placeholder="Type a message..."
         />
         <button
           onClick={sendMessage}
-          className="p-2 bg-blue-600 text-white rounded-md hover:bg-blue-700 transition"
+          className={`p-3 bg-blue-600 text-white rounded-md transition hover:bg-blue-700 ${
+            loading ? "opacity-50 cursor-not-allowed" : ""
+          }`}
           disabled={loading}
         >
-          {loading ? "..." : "Send"}
+          {loading ? "Sending..." : "Send"}
         </button>
       </div>
     </div>

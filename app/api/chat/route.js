@@ -1,7 +1,7 @@
 export async function POST(req) {
   try {
-    console.log("Received message:", message);
     const { message } = await req.json();
+    console.log("Received message:", message);
 
     const response = await fetch(
       "https://openrouter.ai/api/v1/chat/completions",
@@ -9,8 +9,6 @@ export async function POST(req) {
         method: "POST",
         headers: {
           Authorization: `Bearer ${process.env.DEEPSEEK_API_KEY}`,
-          "HTTP-Referer": "https://yourwebsite.com",
-          "X-Title": "My Chatbot",
           "Content-Type": "application/json",
         },
         body: JSON.stringify({
