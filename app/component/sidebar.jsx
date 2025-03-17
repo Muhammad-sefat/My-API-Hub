@@ -1,5 +1,6 @@
 "use client";
 import Link from "next/link";
+import { usePathname } from "next/navigation";
 import { signOut } from "firebase/auth";
 import { auth } from "../lib/firebaseConfig";
 import { useRouter } from "next/navigation";
@@ -14,6 +15,7 @@ import {
 
 export default function Sidebar() {
   const router = useRouter();
+  const pathname = usePathname();
 
   const handleLogout = async () => {
     await signOut(auth);
@@ -27,51 +29,36 @@ export default function Sidebar() {
 
       {/* Navigation Links */}
       <ul className="space-y-4">
-        <li>
-          <Link
-            href="/dashboard/weather"
-            className="flex items-center space-x-3 text-lg hover:bg-gray-800 p-3 rounded-lg transition"
-          >
-            <FaCloudSun className="text-yellow-300" />
-            <span>Weather</span>
-          </Link>
-        </li>
-        <li>
-          <Link
-            href="/dashboard/chatboat"
-            className="flex items-center space-x-3 text-lg hover:bg-gray-800 p-3 rounded-lg transition"
-          >
-            <FaRobot className="text-blue-400" />
-            <span>AI Chatbot</span>
-          </Link>
-        </li>
-        <li>
-          <Link
-            href="/dashboard/currency"
-            className="flex items-center space-x-3 text-lg hover:bg-gray-800 p-3 rounded-lg transition"
-          >
-            <FaDollarSign className="text-green-400" />
-            <span>Currency Exchange</span>
-          </Link>
-        </li>
-        <li>
-          <Link
-            href="/dashboard/movies"
-            className="flex items-center space-x-3 text-lg hover:bg-gray-800 p-3 rounded-lg transition"
-          >
-            <FaFilm className="text-red-400" />
-            <span>Movie Data</span>
-          </Link>
-        </li>
-        <li>
-          <Link
-            href="/dashboard/map"
-            className="flex items-center space-x-3 text-lg hover:bg-gray-800 p-3 rounded-lg transition"
-          >
-            <FaMapMarkedAlt className="text-purple-400" />
-            <span>Map & Location</span>
-          </Link>
-        </li>
+        <SidebarLink
+          href="/dashboard/weather"
+          icon={<FaCloudSun className="text-yellow-300" />}
+          label="Weather"
+          pathname={pathname}
+        />
+        <SidebarLink
+          href="/dashboard/chatboat"
+          icon={<FaRobot className="text-blue-400" />}
+          label="AI Chatbot"
+          pathname={pathname}
+        />
+        <SidebarLink
+          href="/dashboard/currency"
+          icon={<FaDollarSign className="text-green-400" />}
+          label="Currency Exchange"
+          pathname={pathname}
+        />
+        <SidebarLink
+          href="/dashboard/movies"
+          icon={<FaFilm className="text-red-400" />}
+          label="Movie Data"
+          pathname={pathname}
+        />
+        <SidebarLink
+          href="/dashboard/map"
+          icon={<FaMapMarkedAlt className="text-purple-400" />}
+          label="Map & Location"
+          pathname={pathname}
+        />
       </ul>
 
       {/* Logout Button */}
@@ -83,5 +70,23 @@ export default function Sidebar() {
         <span>Logout</span>
       </button>
     </div>
+  );
+}
+
+// Sidebar Link Component
+function SidebarLink({ href, icon, label, pathname }) {
+  const isActive = pathname === href;
+  return (
+    <li>
+      <Link
+        href={href}
+        className={`flex items-center space-x-3 text-lg p-3 rounded-lg transition ${
+          isActive ? "bg-gray-700 text-yellow-300" : "hover:bg-gray-800"
+        }`}
+      >
+        {icon}
+        <span>{label}</span>
+      </Link>
+    </li>
   );
 }
